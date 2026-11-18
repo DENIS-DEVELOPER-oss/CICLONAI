@@ -40,20 +40,18 @@ tests/             regresión contra la app original + pruebas web
 
 ## Desplegar en un VPS (Hostinger KVM, Ubuntu 22.04/24.04)
 
-Desde Windows (carpeta `CiclonAI`):
-
-```powershell
-tar -czf ciclonai.tar.gz --exclude=.venv --exclude=__pycache__ --exclude=.pytest_cache -C ciclonai_flask .
-scp ciclonai.tar.gz root@IP_DEL_VPS:/root/
-ssh root@IP_DEL_VPS
-```
-
-En el servidor:
+Primera instalación (conectado por `ssh root@IP_DEL_VPS`):
 
 ```bash
-rm -rf /root/ciclonai && mkdir /root/ciclonai && tar -xzf /root/ciclonai.tar.gz -C /root/ciclonai
+apt-get update && apt-get install -y git
+git clone https://github.com/DENIS-DEVELOPER-oss/CICLONAI.git /root/ciclonai
 bash /root/ciclonai/deploy/setup.sh
 ```
 
-Para **actualizar**, repetir los mismos pasos (el script es reejecutable).
+Actualizar después de hacer `git push` desde tu PC:
+
+```bash
+cd /root/ciclonai && git pull && bash deploy/setup.sh
+```
+
 Logs: `journalctl -u ciclonai -f` · Reiniciar: `systemctl restart ciclonai`.
