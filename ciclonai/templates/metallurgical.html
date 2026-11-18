@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% from "_macros.html" import errors_box, data_table, actions %}
+{% block title %}Balance metalúrgico — {{ title }}{% endblock %}
+
+{% macro grade(name, el_index) -%}
+  <input type="number" step="any" name="{{ name }}" value="{{ values[name] }}" required inputmode="decimal"
+         aria-label="Ley {{ elements[el_index] }} — {{ name }}">
+{%- endmacro %}
+
+{% block content %}
+  <h1 class="main-title">⚖️ Balance metalúrgico — {{ title }}</h1>
+  <p class="intro">
+    {{ n }} concentrado{{ 's' if n > 1 }} y una cola con {{ n }} elemento{{ 's' if n > 1 }}.
+    Las masas se obtienen resolviendo el sistema lineal de balance de masa y de cada elemento.
+  </p>
+
+  <form method="post" class="card">
+    <div class="groups">
+      <fieldset>
+        <legend>Mineral</legend>
+        <label class="field"><span class="field-label">Alimentación <small>(t húmedas)</small></span>
+          <input type="number" step="any" name="feed_t" value="{{ values.feed_t }}" required></label>
+        <label class="field"><span class="field-label">Humedad <small>(%)</small></span>
+          <input type="number" step="any" name="moisture" value="{{ values.moisture }}" required></label>
+      </fieldset>
+      <fieldset>
+        <legend>Elementos</legend>
+        {% for i in range(n) %}
+          <div class="row-2">
+            <label class="field"><span class="field-label">Elemento {{ i + 1 }}</span>
+              <select name="el_{{ i }}" data-el-select="{{ i }}">
+                {% for e in all_elements %}<option {% if e == elements[i] %}selected{% endif %}>{{ e }}</option>{% endfor %}
+              </select></label>
+            <label class="field"><span class="field-label">Unidad</span>
+              <select name="unit_{{ i }}" data-unit-select="{{ i }}">
+                {% for u in all_units %}<option {% if u == units[i] %}selected{% endif %}>{{ u }}</option>{% endfor %}
+              </select></label>
+          </div>
+        {% endfor %}
+      </fieldset>
+    </div>
+
+    <h3 class="sub-title">Leyes</h3>
+    <div class="table-wrap">
+      <table class="grades">
+        <thead>
+          <tr><th>Producto</th>
+            {% for i in range(n) %}<th><span data-el-name="{{ i }}">{{ elements[i] }}</span> (<span data-unit-name="{{ i }}">{{ units[i] }}</span>)</th>{% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Alimentación</th>{% for i in range(n) %}<td>{{ grade('feed_g_%d' % i, i) }}</td>{% endfor %}</tr>
+          {% for j in range(n) %}
+            <tr><th scope="row">Concentrado {% if n > 1 %}<span data-el-name="{{ j }}">{{ elements[j] }}</span>{% endif %}</th>
+              {% for i in range(n) %}<td>{{ grade('conc_%d_g_%d' % (j, i), i) }}</td>{% endfor %}</tr>
+          {% endfor %}
+          <tr><th scope="row">Cola</th>{% for i in range(n) %}<td>{{ grade('tail_g_%d' % i, i) }}</td>{% endfor %}</tr>
+        </tbody>
+      </table>
+    </div>
+
+    {{ errors_box(errors) }}
+    {{ actions(result) }}
+  </form>
+
+  {% if result %}
+    <div class="kpis">
+      {% for e, r in zip(result.elements, result.recoveries) %}
+        <div class="kpi"><span>Recuperación {{ e }}</span><strong>{{ r | num(2) }} %</strong></div>
+      {% endfor %}
+    </div>
+    <section class="card">
+      <h2 class="card-title">Resultados del balance</h2>
+      {{ data_table(table, 3) }}
+    </section>
+  {% endif %}
+{% endblock %}

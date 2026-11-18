@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import number_field, errors_box %}
+{% block title %}Herramientas{% endblock %}
+{% block content %}
+  <h1 class="main-title">🧰 Herramientas rápidas</h1>
+
+  <div class="tools-grid">
+    {% for key, tool in tools.items() %}
+      <section class="card" id="{{ key }}">
+        <h2 class="card-title"><span class="badge">{{ tool.num }}</span> {{ tool.title }}</h2>
+        <p class="hint">{{ tool.note }}</p>
+        <form method="post" action="{{ url_for('main.tools_page') }}#{{ key }}">
+          <input type="hidden" name="tool" value="{{ key }}">
+          {% for f in tool.fields %}{{ number_field(f, values[key]) }}{% endfor %}
+          <button type="submit" class="btn btn-primary btn-block">Calcular</button>
+        </form>
+
+        {% set r = results.get(key) %}
+        {% if r %}
+          {{ errors_box(r.errors) }}
+          {% if r.value is defined %}
+            <div class="result">
+              {{ tool.result }}: <strong>{{ r.value | num(2) }} {{ tool.unit }}</strong>
+            </div>
+            {% if r.warning %}<div class="alert alert-warning"><p>⚠️ {{ r.warning }}</p></div>{% endif %}
+          {% endif %}
+        {% endif %}
+
+        {% if key == 'mill' %}
+          <img class="figure" src="{{ url_for('static', filename='img/mill_chargue_level.jpg') }}"
+               alt="Referencia: altura libre H y diámetro D del molino" loading="lazy">
+        {% endif %}
+      </section>
+    {% endfor %}
+  </div>
+{% endblock %}

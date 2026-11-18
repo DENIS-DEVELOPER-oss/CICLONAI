@@ -1,0 +1,21 @@
+[Unit]
+Description=CiclonAI (Flask + Gunicorn)
+After=network.target
+
+[Service]
+User=ciclonai
+Group=ciclonai
+WorkingDirectory=/opt/ciclonai
+Environment=FLASK_DEBUG=0
+ExecStart=/opt/ciclonai/.venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 --timeout 60 --access-logfile - "ciclonai:create_app()"
+Restart=always
+RestartSec=3
+
+# Endurecimiento básico
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

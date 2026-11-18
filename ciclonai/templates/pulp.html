@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_macros.html" import number_field, errors_box, warnings_box, data_table, actions %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block content %}
+  <h1 class="main-title">{{ page.icon }} {{ page.title }}</h1>
+  <p class="intro">{{ page.note }}</p>
+
+  <form method="post" class="card">
+    <div class="groups">
+      {% for group in page.groups %}
+        <fieldset>
+          <legend>{{ group.title }}</legend>
+          {% for f in group.fields %}{{ number_field(f, values) }}{% endfor %}
+        </fieldset>
+      {% endfor %}
+    </div>
+    {{ errors_box(errors) }}
+    {{ actions(result) }}
+  </form>
+
+  {% if result %}
+    {{ warnings_box(result.warnings) }}
+    <div class="kpis">
+      {% for label, value in result.circulating_loads.items() %}
+        <div class="kpi"><span>{{ label }}</span><strong>{{ value | num(3) }}</strong><small>{{ (value * 100) | num(1) }} %</small></div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <section class="card">
+    <h2 class="card-title">Diagrama del balance</h2>
+    <p class="hint">Valores por corriente: mineral (t/h) · pulpa (m³/h) · % sólidos (w/w).</p>
+    <img class="figure diagram" src="{{ diagram }}" alt="Diagrama de {{ page.title }}">
+  </section>
+
+  {% if table %}
+    <section class="card">
+      <h2 class="card-title">Resultados del balance</h2>
+      {{ data_table(table) }}
+    </section>
+  {% endif %}
+{% endblock %}

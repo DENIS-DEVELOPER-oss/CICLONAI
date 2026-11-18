@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CiclonAI{% endblock %} · CiclonAI</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Abrir menú">
+  <label for="nav-toggle" class="nav-button" aria-hidden="true">☰</label>
+
+  <aside class="sidebar">
+    <a href="{{ url_for('main.index') }}" class="brand">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="CiclonAI">
+    </a>
+    <nav>
+      <a href="{{ url_for('main.index') }}" class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}">🏠 Inicio</a>
+      {% for section in navigation() %}
+        <p class="nav-section">{{ section.title }}</p>
+        {% for item in section['items'] %}
+          <a href="{{ item.url }}" class="nav-link {% if request.path == item.url %}active{% endif %}">{{ item.icon }} {{ item.label }}</a>
+        {% endfor %}
+      {% endfor %}
+    </nav>
+  </aside>
+
+  <main class="content">
+    {% block content %}{% endblock %}
+    <footer class="footer">© 2025 CiclonAI — Software para Procesamiento de Minerales</footer>
+  </main>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>

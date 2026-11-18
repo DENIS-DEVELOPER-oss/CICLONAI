@@ -1,0 +1,46 @@
+{% macro number_field(f, values, label=None) -%}
+  <label class="field">
+    <span class="field-label">{{ label or f.label }}{% if f.unit %} <small>({{ f.unit }})</small>{% endif %}</span>
+    <input type="number" step="any" name="{{ f.name }}" value="{{ values[f.name] }}" required inputmode="decimal">
+  </label>
+{%- endmacro %}
+
+{% macro errors_box(errors) -%}
+  {% if errors %}
+    <div class="alert alert-error" role="alert">
+      {% for e in errors %}<p>⚠️ {{ e }}</p>{% endfor %}
+    </div>
+  {% endif %}
+{%- endmacro %}
+
+{% macro warnings_box(warnings) -%}
+  {% if warnings %}
+    <div class="alert alert-warning" role="status">
+      {% for w in warnings %}<p>⚠️ {{ w }}</p>{% endfor %}
+    </div>
+  {% endif %}
+{%- endmacro %}
+
+{% macro data_table(table, decimals=2) -%}
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr>{% for h in table.headers %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for row in table.rows %}
+          <tr class="{% if loop.index0 in table.highlight_rows %}row-highlight{% endif %}">
+            <th scope="row">{{ row[0] }}</th>
+            {% for v in row[1:] %}<td>{{ v | num(decimals) }}</td>{% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{%- endmacro %}
+
+{% macro actions(has_result) -%}
+  <div class="actions">
+    <button type="submit" name="action" value="run" class="btn btn-primary">Ejecutar balance</button>
+    <button type="submit" name="action" value="excel" class="btn btn-secondary">⬇️ Descargar Excel</button>
+    <a href="{{ request.path }}" class="btn btn-ghost">Limpiar datos</a>
+  </div>
+{%- endmacro %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+{% block content %}
+  <h1 class="main-title">Bienvenido a Ciclon IA</h1>
+  <div class="intro">
+    Herramientas para cálculos rápidos y balances de masa en procesamiento de minerales.
+    Elige una herramienta para comenzar.
+  </div>
+
+  <div class="home-grid">
+    {% for section in navigation() %}
+      <section class="card">
+        <h2 class="card-title">{{ section.title }}</h2>
+        {% for item in section['items'] %}
+          <a class="home-link" href="{{ item.url }}">
+            <span class="home-icon">{{ item.icon }}</span>
+            <span>
+              <strong>{{ item.label }}</strong>
+              <small>{{ item.detail }}</small>
+            </span>
+          </a>
+        {% endfor %}
+      </section>
+    {% endfor %}
+  </div>
+{% endblock %}
