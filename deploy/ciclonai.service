@@ -7,7 +7,8 @@ User=ciclonai
 Group=ciclonai
 WorkingDirectory=/opt/ciclonai
 Environment=FLASK_DEBUG=0
-ExecStart=/opt/ciclonai/.venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 --timeout 60 --access-logfile - "ciclonai:create_app()"
+# __APP_PORT__ lo reemplaza deploy/setup.sh
+ExecStart=/opt/ciclonai/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:__APP_PORT__ --timeout 60 --access-logfile - "ciclonai:create_app()"
 Restart=always
 RestartSec=3
 

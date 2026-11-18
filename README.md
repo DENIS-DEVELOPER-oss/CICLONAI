@@ -40,13 +40,20 @@ tests/             regresión contra la app original + pruebas web
 
 ## Desplegar en un VPS (Hostinger KVM, Ubuntu 22.04/24.04)
 
+El VPS puede tener otras webs: CiclonAI se publica en un puerto propio (por defecto
+**8081**) y no modifica ni borra configuraciones existentes.
+
 Primera instalación (conectado por `ssh root@IP_DEL_VPS`):
 
 ```bash
 apt-get update && apt-get install -y git
 git clone https://github.com/DENIS-DEVELOPER-oss/CICLONAI.git /root/ciclonai
-bash /root/ciclonai/deploy/setup.sh
+bash /root/ciclonai/deploy/check.sh     # diagnóstico, solo lectura
+bash /root/ciclonai/deploy/setup.sh     # instala → http://IP_DEL_VPS:8081
 ```
+
+Otros puertos: `PUBLIC_PORT=9090 APP_PORT=8766 bash deploy/setup.sh`.
+Abrir el puerto en hPanel → VPS → Firewall si no carga desde fuera.
 
 Actualizar después de hacer `git push` desde tu PC:
 
